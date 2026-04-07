@@ -1,130 +1,131 @@
 ---
-name: vibe-coding
-description: 用「评分表驱动迭代」方法把项目做到生产级别。每次输入 /vibe-coding 启动，自动打分、修复、循环直到满足生产就绪阈值。
+name: vibe-production
+description: Drive any project to production-readiness using a scorecard-driven iteration method. Trigger with /vibe-production to automatically score, fix, and loop until all production thresholds are met.
 disable-model-invocation: true
 ---
 
-# Vibe Coding — 评分表驱动迭代
+# Auto Production — Scorecard-Driven Iteration
 
-你是一个严格的产品评审 + 开发者。你的任务是用「评分表驱动迭代」方法把当前项目做到极致。
+You are a strict product reviewer + developer. Your task is to drive the current project to production-readiness using a scorecard-driven iteration method.
 
-## 工作流程
+## Workflow
 
-### 第一步：读取或创建评分表
+### Step 1: Read or Create the Scorecard
 
-检查当前项目根目录是否存在 `VIBE_SCORECARD.md`。
+Check whether `production_scorecard.md` exists in the current project root.
 
-**如果不存在**，先探索项目代码（读取关键文件，了解功能），然后判断项目类型并在评分表头部声明：
+**If it does not exist**, first explore the project code (read key files to understand functionality), then determine the project type and declare it at the top of the scorecard:
 
-- **纯后端 API**：有路由/handler，无前端页面
-- **前端**：主体是 UI 组件，无服务端逻辑
-- **全栈**：同时含前端页面和后端 API
-- **CLI 工具**：命令行入口，无 HTTP 服务
+- **Pure Backend API**: has routes/handlers, no frontend pages
+- **Frontend**: primarily UI components, no server-side logic
+- **Full-Stack**: contains both frontend pages and backend API
+- **CLI Tool**: command-line entry point, no HTTP service
 
-项目类型决定「开发者/用户体验」维度使用后端还是前端的10分标准。声明后创建评分表：
+The project type determines whether the "Developer/User Experience" dimension uses backend or frontend 10-point standards. After declaring, create the scorecard:
 
 ```markdown
-# Vibe Scorecard
+# Production Scorecard
 
-**项目类型**：[纯后端 API / 前端 / 全栈 / CLI 工具]
+**Project Type**: [Pure Backend API / Frontend / Full-Stack / CLI Tool]
 
-| 维度 | 分数 | 子维度分数 | 主要问题 | 生产就绪需要做什么 |
-|------|------|-----------|---------|------------------|
-| 功能完整性 | X | — | ... | ... |
-| 安全性 | X | 认证:X 输入验证:X 加密:X OWASP:X | ... | ... |
-| 稳定性 | X | — | ... | ... |
-| 依赖健康度 | X | CVE:X License:X 锁定:X CI扫描:X | ... | ... |
-| 测试策略 | X | 覆盖率:X% 集成:X E2E:X CI:X | ... | ... |
-| 代码质量 | X | 复杂度:X 重复率:X 命名:X 长度:X | ... | ... |
-| 架构成熟度 | X | — | ... | ... |
-| 性能 | X | P99:Xms N+1:X 索引:X 内存:X | ... | ... |
-| 可观测性 | X | 日志:X Metrics:X 追踪:X 告警:X | ... | ... |
-| 文档质量 | X | API文档:X README:X ADR:X 运维:X | ... | ... |
-| 开发者/用户体验 | X | — | ... | ... |
-| 合规性与数据治理 | X | PII:X 数据保留:X 合规项:X | ... | ... |
-| 可运维性 | X | 健康检查:X Runbook:X 备份:X 配置:X | ... | ... |
+| Dimension | Score | Sub-scores | Main Issues | What's needed for production |
+|-----------|-------|-----------|-------------|------------------------------|
+| Feature Completeness | X | — | ... | ... |
+| Security | X | Auth:X Input-Validation:X Encryption:X OWASP:X | ... | ... |
+| Stability | X | — | ... | ... |
+| Dependency Health | X | CVE:X License:X Pinned:X CI-Scan:X | ... | ... |
+| Test Strategy | X | Coverage:X% Integration:X E2E:X CI:X | ... | ... |
+| Code Quality | X | Complexity:X Duplication:X Naming:X Length:X | ... | ... |
+| Architecture Maturity | X | — | ... | ... |
+| Performance | X | P99:Xms N+1:X Index:X Memory:X | ... | ... |
+| Observability | X | Logging:X Metrics:X Tracing:X Alerts:X | ... | ... |
+| Documentation Quality | X | API-Docs:X README:X ADR:X Ops:X | ... | ... |
+| Developer/User Experience | X | — | ... | ... |
+| Compliance & Data Governance | X | PII:X Retention:X Checklist:X | ... | ... |
+| Operability | X | Health-Check:X Runbook:X Backup:X Config:X | ... | ... |
 
-## 功能清单（首次运行时填写，功能完整性打分依据）
+## Feature Checklist (fill on first run — used as basis for Feature Completeness score)
 
-| # | 功能描述 | 状态 | 备注 |
-|---|---------|------|------|
-| 1 | ... | ✅ 已实现 / ❌ 未实现 / ⚠️ 部分实现 | ... |
+| # | Feature | Status | Notes |
+|---|---------|--------|-------|
+| 1 | ... | ✅ Implemented / ❌ Not implemented / ⚠️ Partial | ... |
 
-## 历史记录
-- [日期] 创建评分表，项目类型：[类型]
+## History
+- [Date] Scorecard created, project type: [type]
 ```
 
-**如果已存在**，读取它，继续迭代。
+**If it already exists**, read it and continue iterating.
 
-### 第二步：选择当前要改进的维度
+### Step 2: Choose the Dimension to Improve
 
-找出分数最低且**未达到生产就绪阈值**的维度。如果并列，按优先级顺序：安全性 > 依赖健康度 > 合规性与数据治理 > 架构成熟度 > 功能完整性 > 稳定性 > 测试策略 > 代码质量 > 性能 > 可观测性 > 可运维性 > 文档质量 > 开发者/用户体验。
+Find the lowest-scoring dimension that has **not yet reached its production threshold**. If tied, use this priority order: Security > Dependency Health > Compliance & Data Governance > Architecture Maturity > Feature Completeness > Stability > Test Strategy > Code Quality > Performance > Observability > Operability > Documentation Quality > Developer/User Experience.
 
-### 第三步：修复
+### Step 3: Fix
 
-专注修复当前维度的问题，每次只处理一个维度：
+Focus on fixing the current dimension — only one dimension per run:
 
-1. **评估改动量**：如果预计改动超过 20 个文件或 500 行，先将当前维度拆成子任务逐个处理
-2. **先运行该维度的检测命令**确定问题范围（检测命令参考下方「维度检测速查」）
-3. 详细分析问题根因
-4. 实施修复（修改代码）；**每完成一个子问题立即 commit**：
+1. **Estimate scope**: if the fix involves >20 files or >500 lines, split the dimension into sub-tasks (e.g. Security → Input Validation, Secrets Management, Encryption) and handle them one at a time
+2. **Run the detection command** for this dimension first to scope the problems (see "Detection Quick Reference" below)
+3. Analyze the root cause in detail
+4. Implement fixes; **commit after each sub-problem**:
    ```bash
-   git add -A && git commit -m "vibe: [维度名] 修复[子问题] — 简述"
+   git add -A && git commit -m "vibe-production: [dimension] fix [sub-problem] — brief description"
    ```
-5. 自测验收（重新运行检测命令，确认问题已消除）
-6. 如果遇到报错，先修复报错再继续
+5. Self-validate (re-run detection command, confirm issue is resolved)
+6. If errors occur, fix them before continuing
 
-### 第四步：更新评分表
+### Step 4: Update the Scorecard
 
-修复完成后更新 `VIBE_SCORECARD.md`：
-- 更新该维度的分数（含子维度分数）
-- 更新剩余问题描述
-- 在历史记录中追加：`- [日期] [维度] X分→Y分 — 简述 | 下次继续：[下一维度或子任务]`
-- 执行最终 commit：`git add -A && git commit -m "vibe: [维度名] 从X分提升到Y分 — 简述"`
+After completing the full dimension:
+- Update the dimension's score (including sub-scores)
+- Update the remaining issues description
+- Append to history: `- [Date] [Dimension] X→Y — what changed | Next: [next dimension or sub-task]`
+- Final commit: `git add -A && git commit -m "vibe-production: [dimension] X→Y — brief description"`
 
-### 第五步：判断是否生产就绪
+### Step 5: Check Production Readiness
 
-检查是否同时满足：
-- 安全性 = 10 分（硬性要求）
-- 稳定性 + 依赖健康度 均 ≥ 8 分
-- 合规性与数据治理 ≥ 7 分
-- 其余维度均 ≥ 7 分
-- 无任何维度低于 6 分
+Verify all of the following are simultaneously satisfied:
+- Security = 10 (hard requirement)
+- Stability + Dependency Health both ≥ 8
+- Compliance & Data Governance ≥ 7
+- All other dimensions ≥ 7
+- No dimension below 6
 
-**满足** → 输出生产就绪报告，总结各维度得分和主要改进
+**Met** → Output production-readiness report summarizing final scores and key improvements
 
-**未满足** → 回到第二步
+**Not met** → Return to Step 2
 
-## 维度检测速查
+## Detection Quick Reference
 
-| 维度 | 检测命令 |
-|------|---------|
-| 功能完整性 | `grep -rn "TODO\|FIXME\|HACK" .`；对照功能清单逐条核查 |
-| 安全性 | `semgrep --config=auto .`；`trivy fs .`；grep 扫描硬编码 secrets |
-| 稳定性 | grep 扫描无 context 的 http.Get/sql.Query；检查 SIGTERM handler |
-| 依赖健康度 | `govulncheck ./...` / `npm audit --audit-level=high` / `pip-audit` |
-| 测试策略 | `go test -cover ./...` / `jest --coverage`；检查 CI 配置 |
-| 代码质量 | `gocyclo -over 10 .` / `eslint --max-warnings 0`；`jscpd .` |
-| 架构成熟度 | `madge --circular src/`；`go tool vet ./...` |
-| 性能 | `EXPLAIN ANALYZE`；`k6 run` / `artillery run` |
-| 可观测性 | grep 扫描 fmt.Print/console.log；验证 /metrics 端点 |
-| 文档质量 | 验证 openapi.json；执行 README Quick Start；`ls docs/adr/` |
-| 开发者/用户体验 | curl 错误接口验证响应格式；grep 扫描 stack trace 泄露 |
-| 合规性与数据治理 | grep 扫描日志中的 PII 字段；检查数据保留策略文档 |
-| 可运维性 | `curl -f /health`；`curl -f /ready`；检查 Runbook 和备份配置 |
+| Dimension | Detection Command |
+|-----------|------------------|
+| Feature Completeness | `grep -rn "TODO\|FIXME\|HACK" .`; verify each item in the feature checklist |
+| Security | `semgrep --config=auto .`; `trivy fs .`; grep for hardcoded secrets |
+| Stability | grep for `http.Get`/`sql.Query` without context; check SIGTERM handler |
+| Dependency Health | `govulncheck ./...` / `npm audit --audit-level=high` / `pip-audit` |
+| Test Strategy | `go test -cover ./...` / `jest --coverage`; check CI config |
+| Code Quality | `gocyclo -over 10 .` / `eslint --max-warnings 0`; `jscpd .` |
+| Architecture Maturity | `madge --circular src/`; `go tool vet ./...` |
+| Performance | `EXPLAIN ANALYZE`; `k6 run` / `artillery run` |
+| Observability | grep for `fmt.Print`/`console.log`; verify `/metrics` endpoint |
+| Documentation Quality | verify openapi.json; run README Quick Start; `ls docs/adr/` |
+| Developer/User Experience | curl error endpoints to verify response format; grep for stack trace leaks |
+| Compliance & Data Governance | grep logs for PII fields; check data retention policy doc |
+| Operability | `curl -f /health`; `curl -f /ready`; check Runbook and backup config |
 
-## 注意事项
+## Notes
 
-- **每次只处理一个维度**，不要贪多
-- **每完成一个子问题立即 commit**，减少中断丢失进度的风险
-- **中断后续跑**：直接重新输入 `/vibe-coding`，会自动读取 `VIBE_SCORECARD.md` 从断点接着跑
-- **每次修复后必须自测**，确认有效再更新分数
-- **描述要具体**，不要写「更好看」，要写「把按钮宽度从80px改为120px」
-- **遇到卡住**，把任务拆小，逐步执行
-- **遇到报错**，先把报错信息分析清楚再修
+- **One dimension per run** — don't be greedy
+- **Commit after each sub-problem** — reduces progress loss on interruption
+- **Resuming after interruption**: re-type `/vibe-production` — it will read `production_scorecard.md` and resume from the "Next:" breakpoint in history
+- **Self-validate after every fix** before updating the score
+- **Be specific** — don't write "looks better", write "changed button width from 80px to 120px"
+- **When stuck**, break the task into smaller pieces
+- **When errors occur**, analyze the error message first before fixing
 
-## 开始
+## Start
 
-现在开始：检查项目根目录是否有 `VIBE_SCORECARD.md`，然后执行上述流程。
+Begin now: check whether `production_scorecard.md` exists in the project root, then execute the workflow above.
 
-**重要：整个过程中不要询问「是否继续」「是否proceed」，直接执行，只在真正遇到无法判断的歧义时才暂停提问。**
+**Important: Do not ask "should I continue?" or "shall I proceed?" — execute directly. Only pause to ask when you encounter genuine ambiguity that cannot be reasonably resolved.**
+

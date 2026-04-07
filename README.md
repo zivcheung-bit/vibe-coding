@@ -1,41 +1,41 @@
-# Vibe Coding Skill
+# Vibe Production
 
-用「评分表驱动迭代」方法把项目做到生产级别的 Claude Code 自定义命令。
+A Claude Code custom command that drives your project to production-readiness using a scorecard-driven iteration method.
 
-在任意项目输入 `/vibe`，AI 自动打分、修复、循环直到满足生产就绪阈值。
-
----
-
-## 评分维度（13个，针对中型项目生产环境优化）
-
-| 优先级 | 维度 | 说明 |
-|--------|------|------|
-| 1 | 安全性 | OWASP Top 10、secrets 管理、加密（子维度：认证/输入验证/加密/OWASP） |
-| 2 | 依赖健康度 | CVE 扫描、License 合规、版本锁定、CI 自动扫描 |
-| 3 | 合规性与数据治理 | PII 识别脱敏、数据保留策略、GDPR/CCPA/SOC2 合规项 |
-| 4 | 架构成熟度 | 模块解耦、循环依赖检测、接口抽象 |
-| 5 | 功能完整性 | 基于功能清单逐条验证，边缘案例覆盖 |
-| 6 | 稳定性 | 超时重试、优雅关闭、panic 兜底、错误上下文 |
-| 7 | 测试策略 | 单测覆盖率≥80%、集成测试、E2E、CI 自动化 |
-| 8 | 代码质量 | 圈复杂度<10、命名规范、无重复逻辑、函数<50行 |
-| 9 | 性能 | P99响应<500ms、N+1查询、索引、内存泄漏 |
-| 10 | 可观测性 | 结构化日志、metrics、trace_id、告警规则 |
-| 11 | 可运维性 | /health+/ready 端点、Runbook、备份恢复、IaC |
-| 12 | 文档质量 | API 文档、README、ADR、运维文档 |
-| 13 | 开发者/用户体验 | 后端评 DX checklist；前端评 UX |
-
-## 生产就绪阈值（无需所有维度满10分）
-
-- 安全性 = 10 分（硬性要求）
-- 稳定性 + 依赖健康度 均 ≥ 8 分
-- 合规性与数据治理 ≥ 7 分
-- 其余维度均 ≥ 7 分，无任何维度低于 6 分
+Type `/vibe-production` in any project and the AI automatically scores, fixes, and loops until all production thresholds are met.
 
 ---
 
-## 安装
+## Scoring Dimensions (13 dimensions, optimized for mid-scale production environments)
 
-### 方式一：一键脚本（推荐）
+| Priority | Dimension | Description |
+|----------|-----------|-------------|
+| 1 | Security | OWASP Top 10, secrets management, encryption (sub-dimensions: auth / input-validation / encryption / OWASP) |
+| 2 | Dependency Health | CVE scanning, license compliance, version pinning, CI auto-scan |
+| 3 | Compliance & Data Governance | PII identification & masking, data retention policy, GDPR/CCPA/SOC2 checklist |
+| 4 | Architecture Maturity | Module decoupling, circular dependency detection, interface abstraction |
+| 5 | Feature Completeness | Item-by-item verification against feature checklist, edge case coverage |
+| 6 | Stability | Timeouts & retries, graceful shutdown, panic fallback, error context |
+| 7 | Test Strategy | Unit test coverage ≥ 80%, integration tests, E2E, CI automation |
+| 8 | Code Quality | Cyclomatic complexity < 10, naming conventions, no duplicate logic, functions < 50 lines |
+| 9 | Performance | P99 response < 500ms, N+1 queries, indexes, memory leaks |
+| 10 | Observability | Structured logging, metrics, trace_id, alert rules |
+| 11 | Operability | /health + /ready endpoints, Runbook, backup & recovery, IaC |
+| 12 | Documentation Quality | API docs, README, ADR, ops documentation |
+| 13 | Developer/User Experience | Backend: DX checklist; Frontend: UX evaluation |
+
+## Production Readiness Thresholds (not all dimensions need to reach 10)
+
+- Security = 10 (hard requirement)
+- Stability + Dependency Health both ≥ 8
+- Compliance & Data Governance ≥ 7
+- All other dimensions ≥ 7, no dimension below 6
+
+---
+
+## Installation
+
+### Option 1: One-liner script (recommended)
 
 ```bash
 git clone https://github.com/zivcheung-bit/vibe-coding.git
@@ -43,51 +43,51 @@ cd vibe-coding
 bash install.sh
 ```
 
-### 方式二：curl 单行安装
+### Option 2: curl single-line install
 
 ```bash
 mkdir -p ~/.claude/commands && curl -fsSL \
-  https://raw.githubusercontent.com/zivcheung-bit/vibe-coding/main/vibe.md \
-  -o ~/.claude/commands/vibe.md
+  https://raw.githubusercontent.com/zivcheung-bit/vibe-coding/main/vibe-production.md \
+  -o ~/.claude/commands/vibe-production.md
 ```
 
-### 方式三：手动
+### Option 3: Manual
 
-1. 下载 `vibe.md`
-2. 放到 `~/.claude/commands/vibe.md`
+1. Download `vibe-production.md`
+2. Place it at `~/.claude/commands/vibe-production.md`
 
 ---
 
-## 使用
+## Usage
 
 ```
-# 在任意项目目录，打开 Claude Code，输入：
-/vibe
+# In any project directory, open Claude Code and type:
+/vibe-production
 ```
 
-**第一次运行**：AI 探索代码 → 判断项目类型 → 填写功能清单 → 创建 `VIBE_SCORECARD.md`（含子维度分数） → 开始修第一个维度
+**First run**: AI explores code → determines project type → fills feature checklist → creates `production_scorecard.md` (with sub-dimension scores) → starts fixing the first dimension
 
-**后续运行**：读取已有评分表 → 接着上次进度继续
+**Subsequent runs**: reads existing scorecard → continues from last progress
 
-**生产就绪**：满足阈值后自动停止，输出生产就绪报告，总结各维度得分和改进内容
+**Production ready**: automatically stops when thresholds are met, outputs production-readiness report with final scores and key improvements
 
 ---
 
-## 避免频繁确认弹窗
+## Skip Confirmation Prompts
 
 ```bash
 claude --dangerously-skip-permissions
 ```
 
-启动 Claude Code 后再输入 `/vibe`，全程无需手动确认。
+Start Claude Code, then type `/vibe-production` — no manual confirmations needed throughout.
 
 ---
 
-## 文件说明
+## Files
 
 ```
 vibe-coding/
-├── vibe.md       # Claude Code 自定义命令（安装到 ~/.claude/commands/）
-├── install.sh    # 一键安装脚本
-└── README.md     # 说明文档
+├── vibe-production.md  # Claude Code custom command (install to ~/.claude/commands/)
+├── install.sh          # One-click install script
+└── README.md           # Documentation
 ```
